@@ -1,8 +1,4 @@
-(ns laranjas.main
-  (:require [laranjas.hiccup :as h]))
-
-(def app
-  (h/html-str [:h2 "howdy worldy"]))
+(ns laranjas.main)
 
 (defn -main []
   (let [c (js/document.getElementById "app")
