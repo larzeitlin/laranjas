@@ -52,28 +52,60 @@ void main() {
 ")
 
 (defn frag-shader []
-  (create-shader (g/get gl "FRAGMENT_SHADER")
-                 frag-shader-source))
+  (create-shader
+   (g/get gl "FRAGMENT_SHADER")
+   frag-shader-source))
 
 (defn vert-shader []
-  (create-shader (g/get gl "VERTEX_SHADER")
-                 vert-shader-source))
+  (create-shader
+   (g/get gl "VERTEX_SHADER")
+   vert-shader-source))
 
 (defn create-prog [vert frag]
   (let [program (.createProgram gl)]
     (.attachShader gl program vert)
     (.attachShader gl program frag)
     (.linkProgram gl program)
+
     (js/console.log
      (str "link status: "
-          (.getProgramParameter gl program
-                                (g/get gl "LINK_STATUS"))))
+          (.getProgramParameter
+           gl
+           program
+           (g/get gl "LINK_STATUS"))))
+    
+    ;; return
     program))
 
 (defn clean-up []
   (.deleteProgram gl (:prog @game-state))
   (.deleteShader  gl (:vs @game-state))
   (.deleteShader  gl (:fs @game-state)))
+
+(defn set-vertex-attrib-pointer [pos-attr-loc]
+  (let [size 2
+        dtype (g/get gl "FLOAT")
+        normalize? false
+        stride 0
+        offset 0]
+    (.vertexAttribPointer gl
+                          pos-attr-loc
+                          size
+                          dtype
+                          normalize?
+                          stride
+                          offset)))
+
+(defn draw-triangles []
+  (let [prim-type (g/get gl "TRIANGLES")
+        offset 0
+        cnt 3]
+    (.drawArrays gl prim-type offset cnt)))
+
+(defn bind-pos-buff [pos-buff]
+  (.bindBuffer gl
+                 (g/get gl "ARRAY_BUFFER")
+                 pos-buff))
 
 (defn -main []
   (.addEventListener js/window
@@ -83,41 +115,26 @@ void main() {
         fs (frag-shader)
         prog (create-prog vs fs)
         _ (reset! game-state {:vs vs :fs fs :prog prog})
-        pos-attr-loc (.getAttribLocation gl
-                                         prog
-                                         "a_position")
+        pos-attr-loc (.getAttribLocation
+                      gl
+                      prog
+                      "a_position")
         pos-buff (.createBuffer gl)
-        _ (.bindBuffer gl
-                       (g/get gl "ARRAY_BUFFER")
-                       pos-buff)
-        points [0 0 0 0.5 0.7 0]
-        _ (.bufferData gl
-                       (g/get gl "ARRAY_BUFFER")
-                       (js/Float32Array. points)
-                       (g/get gl "STATIC_DRAW"))]
+        points [0 0 0 0.5 0.7 1]]
+    
     (reset-dimensions)
     (clear)
+    (bind-pos-buff pos-buff)
+        
+    (.bufferData gl
+                 (g/get gl "ARRAY_BUFFER")
+                 (js/Float32Array. points)
+                 (g/get gl "STATIC_DRAW"))
     (.useProgram gl prog)
     (.enableVertexAttribArray gl pos-attr-loc)
-    (.bindBuffer gl
-                 (g/get gl "ARRAY_BUFFER")
-                 pos-buff)
-    (let [size 2
-          dtype (g/get gl "FLOAT")
-          normalize? false
-          stride 0
-          offset 0]
-      (.vertexAttribPointer gl
-                            pos-attr-loc
-                            size
-                            dtype
-                            normalize?
-                            stride
-                            offset))
-    (let [prim-type (g/get gl "TRIANGLES")
-          offset 0
-          cnt 3]
-      (.drawArrays gl prim-type offset cnt))))
+    (bind-pos-buff pos-buff)
+    (set-vertex-attrib-pointer pos-attr-loc)
+    (draw-triangles)))
 
 (comment
   (clean-up)
