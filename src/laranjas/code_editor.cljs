@@ -17,7 +17,7 @@
       try-eval))
 
 (defn fetch-file-content []
-  (-> (.fetch js/window "/src/laranjas/main.cljs")
+  (-> (.fetch js/window "https://raw.githubusercontent.com/larzeitlin/laranjas/main/src/laranjas/main.cljs")
       (.then #(.text %))
       (.then #(set-div-content % "code-area"))
       (.then #(read-eval-input "code-area"))))
