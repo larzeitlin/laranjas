@@ -1,6 +1,7 @@
 body {
     height: 100%;
     width: 100%;
+    overflow: clip;
 }
 
 canvas {
@@ -13,4 +14,38 @@ canvas {
     right: 0;
     height: 100%;
     width: 100%;
+}
+
+#codeEditor {
+    position: absolute;
+    z-index: 10;
+    height: 100%;
+    width: 40%
+}
+
+#code-area {
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0.5;
+    font-family: monospace;
+    color: rgba(255, 255, 255, 1.0);
+    height: 70%;
+    width: 100%;
+    resize: none;
+    border-width: 0px;
+}
+
+#output-area {
+    background: rgba(0, 0, 0, 0.0);
+    opacity: 0.5;
+    font-family: monospace;
+    color: rgba(255, 255, 255, 1.0);
+    height: 10%;
+    width: 100%;
+    border-width: 0px
+}
+
+button {
+    background: rgba(0, 0, 0, 0.0);
+    font-family: monospace;
+    color: rgba(255, 255, 255, 1.0);
 }

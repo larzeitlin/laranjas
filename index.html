@@ -9,13 +9,20 @@
 	  href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/scittle@0.6.15/dist/scittle.js"
 	    type="application/javascript"></script>
+    <script src="src/laranjas/code_editor.cljs"
+	    type="application/x-scittle"></script>
+
   </head>
   <body>
     <canvas id="app"
-	  width="800"
-	  height="500">
-    </canvas>
-    <script src="src/laranjas/main.cljs"
-	    type="application/x-scittle"></script>
+	    width="800"
+	    height="500"></canvas>
+    <div id="codeEditor">
+      <textarea id="code-area"
+		style="font-family:monospace;">
+      </textarea>
+      <button onclick="read_input()">run</button>
+      <p id="output-area">...</p>
+    </div>
   </body>
 </html>

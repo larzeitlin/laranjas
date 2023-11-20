@@ -1,18 +1,18 @@
 (ns laranjas.main
   (:require [goog.object :as g]))
 
-(def game-state (atom {:stop false
-                       :p-systems []}))
+(defonce game-state (atom {:stop false
+                           :p-systems []}))
 
 (def c (js/document.getElementById "app"))
 
 (def ctx (.getContext c "2d"))
 
-(def dimensions (atom {:x 100
-                       :y 100}))
+(defonce dimensions (atom {:x 100
+                           :y 100}))
 
-(def mouse (atom {:x 0
-                  :y 0}))
+(defonce mouse (atom {:x 0
+                      :y 0}))
 
 (defn dim-frac [dim frac]
   (-> @dimensions dim (* frac)))
@@ -69,7 +69,6 @@
       (* vy (- (js/Math.sin theta))))
    (+ (* vy (js/Math.cos theta))
       (* vx (js/Math.sin theta)))])
-
 
 (defn update-particle
   [{:keys [r-decay] :as p-system}
@@ -144,7 +143,17 @@
   (when-not (:stop @game-state)
     (js/window.requestAnimationFrame step)))
 
+(defn freeze []
+  (swap! game-state update :stop not))
+
+(defn reset-game []
+  (reset! game-state {:stop false
+                      :p-systems []})
+  nil)
+
 (defn -main []
+  (freeze)
+  (reset-game)
   (reset-dimensions nil)
   (.addEventListener js/window
                      "resize"
@@ -167,14 +176,5 @@
                          :r-decay 0.998}))
 
   (js/window.requestAnimationFrame step))
-
-(defn reset-game []
-  (reset! game-state {:stop true
-                      :p-systems []})
-  nil)
-
-(defn freeze []
-  (swap! game-state assoc :stop true)
-  nil)
 
 (-main)
